@@ -17,6 +17,17 @@ class IsegSHQ222M:
             print 'Error: Could not open ' + port
             exit(1)
 
+    def chInRange(self, ch):
+        if ch == 1 or ch == 2:
+            return True
+        else:
+            print 'Error: wrong channel number: ' + str(ch)
+            return False
+
+    def cleanString(self, out): # used for returned values
+        out = out.split('\n')[1] # isolate the second line (usually contains the good part)
+        out = out.translate(None, '\r') # eliminate carriage return
+        return out
 
     def write(self, command):
         self.ser.write(command + '\r\n')
@@ -30,4 +41,25 @@ class IsegSHQ222M:
 
     def GetModuleID(self):
         self.write('#')
-        return self.read()
+        ret = self.read()
+        return self.cleanString(ret)
+
+    def SetBreakTime(self, bt):
+        if bt > 255:
+            print 'Error: break time too high'
+        else:
+            self.write('W='+str(bt))
+            self.read() # get response
+            
+    def GetBreakTime(self):
+        self.write('W')
+        ret = self.read()
+        return int(self.cleanString(ret))
+
+    def GetMeasVoltage(self, ch):
+        if self.chInRange(ch):
+            self.write('U'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            print ret # continue from here!!!
+            

@@ -7,6 +7,8 @@ if len(sys.argv) != 2:
 
 hv = IsegSHQ222M.IsegSHQ222M(sys.argv[1])
 print hv.GetModuleID()
-
-
-print 'Endo of test'
+print 'Set break time to 10'
+hv.SetBreakTime(10)
+print hv.GetBreakTime()
+hv.GetMeasVoltage(1)
+print 'End of test'
