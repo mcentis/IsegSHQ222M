@@ -140,3 +140,44 @@ class IsegSHQ222M:
             ret = self.read()
             ret = self.cleanString(ret)
             return ret[3:]
+
+    def GetModuleStatus(self, ch):
+        if self.chInRange(ch):
+            self.write('T'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return int(ret)
+
+    def SetCurrentTrip_mA(self, ch, trip):
+        minTrip = 1e-7 # lowest setting for this range
+        if abs(trip < minTrip):
+            trip = 1
+        else:
+            trip = int(abs(trip/minTrip)) # to get appropriate units for instrument
+        if self.chInRange(ch):
+            self.write('LB'+str(ch)+'='+str(trip))
+            self.read() # get the response
+
+    def GetCurrentTrip_mA(self, ch):
+        if self.chInRange(ch):
+            self.write('LB'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return self.interpretNum(ret)
+
+    def SetCurrentTrip_uA(self, ch, trip):
+        minTrip = 1e-10 # lowest setting for this range
+        if abs(trip < minTrip):
+            trip = 1
+        else:
+            trip = int(abs(trip/minTrip)) # to get appropriate units for instrument
+        if self.chInRange(ch):
+            self.write('LS'+str(ch)+'='+str(trip))
+            self.read() # get the response
+
+    def GetCurrentTrip_uA(self, ch):
+        if self.chInRange(ch):
+            self.write('LS'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return self.interpretNum(ret)

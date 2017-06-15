@@ -26,25 +26,37 @@ hv = IsegSHQ222M.IsegSHQ222M(sys.argv[1])
 # print hv.GetCurrentLimit(1)
 # print hv.GetCurrentLimit(2)
 
-print 'Set target voltages'
-hv.SetVoltage(1, 20.1)
-hv.SetVoltage(2, -300.25666)
-print hv.GetSetVoltage(1)
-print hv.GetSetVoltage(2)
+# print 'Set target voltages'
+# hv.SetVoltage(1, 20.1)
+# hv.SetVoltage(2, -300.25666)
+# print hv.GetSetVoltage(1)
+# print hv.GetSetVoltage(2)
 
-print 'Set ramp speed'
-hv.SetRampSpeed(1, 20)
-hv.SetRampSpeed(2, -5)
-print hv.GetRampSpeed(1)
-print hv.GetRampSpeed(2)
+# print 'Set ramp speed'
+# hv.SetRampSpeed(1, 20)
+# hv.SetRampSpeed(2, -5)
+# print hv.GetRampSpeed(1)
+# print hv.GetRampSpeed(2)
 
-hv.SetVoltage(1, 0)
-hv.SetVoltage(2, 0)
+# hv.SetVoltage(1, 0)
+# hv.SetVoltage(2, 0)
 
-hv.StartVchange(1)
-hv.StartVchange(2)
+# hv.StartVchange(1)
+# hv.StartVchange(2)
 
-print hv.GetStatus(1)
-print hv.GetStatus(2)
+# print 'Channel status'
+# print hv.GetStatus(1)
+# print hv.GetStatus(2)
+
+# print 'Module status'
+# print hv.GetModuleStatus(1)
+# print hv.GetModuleStatus(2)
+
+print 'Set current trip'
+hv.SetCurrentTrip_mA(1, 5e-6)
+print hv.GetCurrentTrip_mA(1)
+
+hv.SetCurrentTrip_uA(2, 1e-9)
+print hv.GetCurrentTrip_uA(2)
 
 print 'End of test'
