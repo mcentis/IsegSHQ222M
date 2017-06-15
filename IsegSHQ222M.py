@@ -29,9 +29,21 @@ class IsegSHQ222M:
         out = out.translate(None, '\r') # eliminate carriage return
         return out
 
+    def interpretNum(self, numStr):
+        if len(numStr) == 9: # value with sign (e.g. voltage)
+            num = float(numStr[:6])
+            num *= pow(10, float(numStr[6:]))
+        elif len(numStr) == 8:  # value without sign (e.g. current)
+            num = float(numStr[:5])
+            num *= pow(10, float(numStr[5:]))            
+        else:
+            num = -1e6
+            print numStr
+        return num
+    
     def write(self, command):
         self.ser.write(command + '\r\n')
-        time.sleep(0.5) # time for the instrument to receive (and process) the instruction
+        time.sleep(0.6) # time for the instrument to receive (and process) the instruction
         
     def read(self):
         out = ''
@@ -61,5 +73,70 @@ class IsegSHQ222M:
             self.write('U'+str(ch))
             ret = self.read()
             ret = self.cleanString(ret)
-            print ret # continue from here!!!
+            return self.interpretNum(ret)
+        
+    def GetMeasCurrent(self, ch):
+        if self.chInRange(ch):
+            self.write('I'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return self.interpretNum(ret)
+
+    def GetVoltageLimit(self, ch):
+        if self.chInRange(ch):
+            self.write('M'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return int(ret)
+
+    def GetCurrentLimit(self, ch):
+        if self.chInRange(ch):
+            self.write('N'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return int(ret)
+
+    def SetVoltage(self, ch, volt):
+        volt = abs(volt)
+        if volt > 2000:
+            volt = 2000
+        voltStr = '%0.2f' % volt
+        if self.chInRange(ch):
+            self.write('D'+str(ch)+'='+voltStr)
+            self.read() # get the response
             
+    def GetSetVoltage(self, ch):
+        if self.chInRange(ch):
+            self.write('D'+str(ch))
+            ret = self.read()            
+            ret = self.cleanString(ret)
+            return self.interpretNum(ret)
+
+    def SetRampSpeed(self, ch, rampSpeed):
+        rs = int(abs(rampSpeed))
+        if rs < 2:
+            rs = 2
+        if rs > 255:
+            rs = 255
+        if self.chInRange(ch):
+            self.write('V'+str(ch)+'='+str(rs))
+            self.read() # get the response
+
+    def GetRampSpeed(self, ch):
+        if self.chInRange(ch):
+            self.write('V'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return int(ret)
+
+    def StartVchange(self, ch):
+        if self.chInRange(ch):
+            self.write('G'+str(ch))
+            self.read() # get the response
+
+    def GetStatus(self, ch):
+        if self.chInRange(ch):
+            self.write('S'+str(ch))
+            ret = self.read()
+            ret = self.cleanString(ret)
+            return ret[3:]
