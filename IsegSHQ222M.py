@@ -16,6 +16,7 @@ class IsegSHQ222M:
         if self.ser.isOpen() == False:
             print 'Error: Could not open ' + port
             exit(1)
+        self.waitTime = 0.8 #[s] time for the instrument to receive (and process) the instruction
 
     def chInRange(self, ch):
         if ch == 1 or ch == 2:
@@ -43,7 +44,7 @@ class IsegSHQ222M:
     
     def write(self, command):
         self.ser.write(command + '\r\n')
-        time.sleep(0.6) # time for the instrument to receive (and process) the instruction
+        time.sleep(self.waitTime) # time for the instrument to receive (and process) the instruction
         
     def read(self):
         out = ''
@@ -181,3 +182,25 @@ class IsegSHQ222M:
             ret = self.read()
             ret = self.cleanString(ret)
             return self.interpretNum(ret)
+
+    def RemoveCurrentTrip_mA(self, ch):
+        if self.chInRange(ch):
+            self.write('LB'+str(ch)+'=0')
+            self.read() # get the response
+
+    def RemoveCurrentTrip_uA(self, ch):
+        if self.chInRange(ch):
+            self.write('LS'+str(ch)+'=0')
+            self.read() # get the response
+
+    def SetVandRamp(self, ch, volt):
+        self.SetVoltage(ch, volt)
+        self.StartVchange(ch)
+
+    def SetVrampWait(self, ch, volt):
+        self.SetVandRamp(ch, volt)
+        st = self.GetStatus(ch)
+        while st == 'L2H' or st == 'H2L':
+            st = self.GetStatus(ch)
+        if st != 'ON':
+            print 'Error while ramping channel '+str(ch)+' supply says: '+st
