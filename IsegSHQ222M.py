@@ -16,7 +16,7 @@ class IsegSHQ222M:
         if self.ser.isOpen() == False:
             print 'Error: Could not open ' + port
             exit(1)
-        self.waitTime = 0.8 #[s] time for the instrument to receive (and process) the instruction
+        self.waitTime = 1 #[s] time for the instrument to receive (and process) the instruction
 
     def chInRange(self, ch):
         if ch == 1 or ch == 2:
