@@ -31,6 +31,10 @@ class IsegSHQ222M:
         return out
 
     def interpretNum(self, numStr):
+        if 'OVER' in numStr: # check for overflow
+            print 'Overflow measured'
+            return -1e6
+        
         if len(numStr) == 9: # value with sign (e.g. voltage)
             num = float(numStr[:6])
             num *= pow(10, float(numStr[6:]))
@@ -39,7 +43,7 @@ class IsegSHQ222M:
             num *= pow(10, float(numStr[5:]))            
         else:
             num = -1e6
-            print numStr
+            print 'Could not interpret number '+numStr
         return num
     
     def write(self, command):
@@ -200,7 +204,7 @@ class IsegSHQ222M:
     def SetVrampWait(self, ch, volt):
         self.SetVandRamp(ch, volt)
         st = self.GetStatus(ch)
-        while st == 'L2H' or st == 'H2L':
+        while st == 'L2H' or st == 'H2L' or st == '': # added last one since the power supply does not answer from time to time...
             st = self.GetStatus(ch)
         if st != 'ON':
             print 'Error while ramping channel '+str(ch)+' supply says: '+st
