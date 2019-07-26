@@ -1,0 +1,2 @@
+This project contains a class to communicate with the IsegSHQ222M HV supply.
+The class is needed by some of the macros in tbTiming.

@@ -1,1 +1,0 @@
-# IsegSHQ222M
